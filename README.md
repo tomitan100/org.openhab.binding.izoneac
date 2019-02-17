@@ -1,2 +1,2 @@
-# org.openhab.binding.izoneaircond
-OH2 binding for iZone Air Conditioning
+# org.openhab.binding.izoneac
+SmartHome/openHAB binding for iZone Air Conditioner
