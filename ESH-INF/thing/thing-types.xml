@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<thing:thing-descriptions bindingId="izoneac"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
+	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
+
+	<bridge-type id="controller">
+		<label>iZone AC Controller</label>
+		<description>The iZone AC controller bridge.</description>
+
+		<channels>
+			<channel id="id" typeId="controllerId" />
+			<channel id="name" typeId="controllerName" />
+			<channel id="unitType" typeId="controllerUnitType" />
+			<channel id="power" typeId="controllerPower" />
+			<channel id="setpoint" typeId="controllerSetpoint" />
+			<channel id="temperature" typeId="controllerTemperature" />
+			<channel id="mode" typeId="controllerMode" />
+			<channel id="fanSpeed" typeId="controllerFanSpeed" />
+			<channel id="sleepTimer" typeId="controllerSleepTimer" />
+			<channel id="favouriteSet" typeId="controllerFavouriteSet" />
+			<channel id="freeAir" typeId="controllerFreeAir" />
+			<channel id="zones" typeId="controllerZones" />
+			<channel id="constants" typeId="controllerConstants" />
+			<channel id="warnings" typeId="controllerWarnings" />
+		</channels>
+
+		<config-description>
+			<parameter name="networkAddress" type="text" required="true">
+				<label>Network Address</label>
+				<description>The network address of the iZone AC controller.</description>
+			</parameter>
+			<parameter name="networkPort" type="integer">
+				<label>Network Port</label>
+				<description>The network port of the iZone air conditioner controller.</description>
+				<default>80</default>
+				<required>false</required>
+			</parameter>
+			<parameter name="refresh" type="integer">
+				<label>Refresh interval in seconds</label>
+				<description>Interval to poll the controller for update. Default to 60 seconds.</description>
+				<default>60</default>
+				<required>false</required>
+			</parameter>
+		</config-description>
+	</bridge-type>
+
+	<thing-type id="zone">
+		<supported-bridge-type-refs>
+			<bridge-type-ref id="controller" />
+		</supported-bridge-type-refs>
+
+		<label>iZone AC Zone</label>
+		<description>The zone connected to iZone AC.</description>
+
+		<channels>
+			<channel id="id" typeId="zoneId" />
+			<channel id="name" typeId="zoneName" />
+			<channel id="ventPosition" typeId="zoneVentPosition" />
+			<channel id="minAirflow" typeId="zoneMinAirflow" />
+			<channel id="maxAirflow" typeId="zoneMaxAirflow" />
+			<channel id="setpoint" typeId="zoneSetpoint" />
+			<channel id="temperature" typeId="zoneTemperature" />
+			<channel id="type" typeId="zoneType" />
+		</channels>
+
+		<config-description>
+			<parameter name="uid" type="text">
+				<label>Thing ID</label>
+				<description>The thing ID.</description>
+			</parameter>
+		</config-description>
+
+	</thing-type>
+
+	<!-- CONTROLLER -->
+	<channel-type id="controllerId">
+		<item-type>String</item-type>
+		<label>ID</label>
+		<description>The controller ID.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerUnitType">
+		<item-type>String</item-type>
+		<label>Unit Type</label>
+		<description>The type of air conditioner.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerName">
+		<item-type>String</item-type>
+		<label>Controller Name</label>
+		<description>The name of the controller.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerPower">
+		<item-type>Switch</item-type>
+		<label>Air-conditioner On/Off</label>
+		<description>Turn on/off air-conditioner unit.</description>
+	</channel-type>
+
+	<channel-type id="controllerSetpoint">
+		<item-type>Number</item-type>
+		<label>Setpoint</label>
+		<description>The controller setpoint temperature.</description>
+		<category>Temperature</category>
+		<state min="15" max="30" step="1" pattern="%d %unit%" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="controllerTemperature">
+		<item-type>Number</item-type>
+		<label>Temperature</label>
+		<description>The temperature on controller.</description>
+		<category>Temperature</category>
+		<state pattern="%d %unit%" readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerMode">
+		<item-type>String</item-type>
+		<label>Mode</label>
+		<description>The air conditioner mode.</description>
+		<state readOnly="false">
+			<options>
+				<option value="AUTO">Auto</option>
+				<option value="VENT">Vent</option>
+				<option value="COOL">Cool</option>
+				<option value="DRY">Dry</option>
+				<option value="HEAT">Heat</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="controllerFanSpeed">
+		<item-type>String</item-type>
+		<label>Fan Speed</label>
+		<description>The air conditioner fan speed.</description>
+		<state readOnly="false">
+			<options>
+				<option value="LOW">Low</option>
+				<option value="MEDIUM">Medium</option>
+				<option value="HIGH">High</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="controllerZones">
+		<item-type>Number</item-type>
+		<label>Number of Zones</label>
+		<description>The number of zones available.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerSleepTimer">
+		<item-type>Number</item-type>
+		<label>Sleet Timer</label>
+		<description>The controller sleep timer.</description>
+		<state min="0" max="120" step="30" pattern="%d" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="controllerFreeAir">
+		<item-type>Switch</item-type>
+		<label>Free Air On/Off</label>
+		<description>Turn on/off free air unit.</description>
+	</channel-type>
+
+	<channel-type id="controllerFavouriteSet">
+		<item-type>Number</item-type>
+		<label>Favourite Set</label>
+		<description>The controller sleep timer.</description>
+		<state min="0" max="9" pattern="%d" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="controllerConstants">
+		<item-type>Number</item-type>
+		<label>Number of Constants</label>
+		<description>The number of constant zones configured.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="controllerWarnings">
+		<item-type>String</item-type>
+		<label>Warnings</label>
+		<description>The warnings noted on controller.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<!-- ZONE -->
+	<channel-type id="zoneId">
+		<item-type>String</item-type>
+		<label>ID</label>
+		<description>The ID of the zone.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="zoneName">
+		<item-type>String</item-type>
+		<label>Name</label>
+		<description>The name of the zone.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="zoneVentPosition">
+		<item-type>String</item-type>
+		<label>Vent Position</label>
+		<description>The vent position of the zone.</description>
+		<state readOnly="false">
+			<options>
+				<option value="AUTO">Auto</option>
+				<option value="OPEN">Open</option>
+				<option value="CLOSE">Close</option>
+			</options>
+		</state>
+	</channel-type>
+
+	<channel-type id="zoneMinAirflow">
+		<item-type>Number</item-type>
+		<label>Minimum Airflow</label>
+		<description>The minimum airflow of the zone.</description>
+		<state min="0" max="100" step="5" pattern="%d %%" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="zoneMaxAirflow">
+		<item-type>Number</item-type>
+		<label>Maximum Airflow</label>
+		<description>The maximum airflow of the zone.</description>
+		<state min="0" max="100" step="5" pattern="%d %%" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="zoneSetpoint">
+		<item-type>Number</item-type>
+		<label>Setpoint</label>
+		<description>The setpoint temperature of the zone.</description>
+		<category>Temperature</category>
+		<state min="15" max="30" step="1" pattern="%d %unit%" readOnly="false"></state>
+	</channel-type>
+
+	<channel-type id="zoneTemperature">
+		<item-type>Number</item-type>
+		<label>Temperature</label>
+		<description>The temperature at the zone.</description>
+		<category>Temperature</category>
+		<state pattern="%d %unit%" readOnly="true"></state>
+	</channel-type>
+
+	<channel-type id="zoneType">
+		<item-type>String</item-type>
+		<label>Zone Type</label>
+		<description>The type of zone.</description>
+		<state readOnly="true"></state>
+	</channel-type>
+</thing:thing-descriptions>
