@@ -13,3 +13,4 @@ This binding supports most functionality as the original iZone controller.
 
 This binding is created for automation via SmartHome/openHAB in mind.  Currently, activating Favourites or predefined Schedule are not supported.  Please request if you would like either feature supported.
 
+Please note, this binding was created for iZone 310 and should be compatible with newer version of the controller.  If there are issues please log a defect.
