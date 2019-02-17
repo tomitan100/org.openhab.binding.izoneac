@@ -9,7 +9,7 @@
 package org.openhab.binding.izoneac.internal.config;
 
 /**
- * The {@link ControllerConfiguration} is responsible for holding configuration information of iZone Controller.
+ * The {@link ControllerConfiguration} is responsible for holding configuration information of iZone AC Controller.
  *
  * @author Thomas Tan - Initial contribution
  */

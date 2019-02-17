@@ -3,8 +3,8 @@
 	xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
 
-	<name>iZone Air Conditioner Binding</name>
-	<description>Binding for iZone Air Conditioner.</description>
+	<name>iZone Air Conditioning Controller Binding</name>
+	<description>Binding for iZone Air Conditioning Controller.</description>
 	<author>Thomas Tan</author>
 
 </binding:binding>

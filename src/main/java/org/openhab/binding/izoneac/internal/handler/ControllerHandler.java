@@ -70,7 +70,7 @@ public class ControllerHandler extends BaseBridgeHandler {
 
     @Override
     public void initialize() {
-        logger.info("Initializing iZone Controller handler...");
+        logger.info("Initializing iZone AC Controller handler...");
         configuration = getConfigAs(ControllerConfiguration.class);
         startRefresh();
     }

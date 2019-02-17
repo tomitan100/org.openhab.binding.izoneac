@@ -31,7 +31,7 @@
 			</parameter>
 			<parameter name="networkPort" type="integer" required="true">
 				<label>Network Port</label>
-				<description>The network port of the iZone air conditioner controller.</description>
+				<description>The network port of the iZone AC controller.</description>
 				<default>80</default>
 				<required>false</required>
 			</parameter>
@@ -96,8 +96,8 @@
 
 	<channel-type id="controllerPower">
 		<item-type>Switch</item-type>
-		<label>Air-conditioner On/Off</label>
-		<description>Turn on/off air-conditioner unit.</description>
+		<label>Air conditioner On/Off</label>
+		<description>Turn on/off air conditioner unit.</description>
 	</channel-type>
 
 	<channel-type id="controllerSetpoint">
