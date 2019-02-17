@@ -1,5 +1,5 @@
 # org.openhab.binding.izoneac
-This is a SmartHome/openHAB binding for iZone Air Conditioning contoller.  iZone is one of the few popular third-party controller available in Australia for many air conditioner brands.
+This is a SmartHome/openHAB binding for iZone Air Conditioning contoller.  iZone is one of the few popular third-party controller available in Australia for many air conditioner brands.  For more information about the product please go to https://izone.com.au/smart-airconditioning/
 
 # Features
 This binding supports most functionality as the original iZone controller.
