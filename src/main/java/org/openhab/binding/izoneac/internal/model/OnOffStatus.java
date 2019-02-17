@@ -14,6 +14,7 @@ package org.openhab.binding.izoneac.internal.model;
  * @author Thomas Tan - Initial contribution
  */
 public enum OnOffStatus {
+    DISABLED("disabled"),
     ON("on"),
     OFF("off");
 

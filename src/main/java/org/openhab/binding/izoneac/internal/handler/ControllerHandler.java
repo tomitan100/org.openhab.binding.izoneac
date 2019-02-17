@@ -59,10 +59,10 @@ public class ControllerHandler extends BaseBridgeHandler {
     private final Object commandLock = new Object();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private @Nullable ScheduledFuture<?> refreshJob;
-    private @Nullable ControllerConfiguration configuration;
-    private @Nullable Controller controller = null;
-    private @Nullable List<Zone> zones = null;
+    private ScheduledFuture<?> refreshJob;
+    private ControllerConfiguration configuration;
+    private Controller controller = null;
+    private List<Zone> zones = null;
 
     public ControllerHandler(Bridge thing) {
         super(thing);
@@ -152,10 +152,9 @@ public class ControllerHandler extends BaseBridgeHandler {
                     updateChannelState(channel.getUID(), controller.getSleepTimer());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FREE_AIR:
-                    updateChannelState(channel.getUID(), controller.getFreeAir().getValue());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FAVOURITE_SET:
-                    updateChannelState(channel.getUID(), controller.getFavouriteSet());
+                    if (controller.getFreeAir() != OnOffStatus.DISABLED) {
+                        updateChannelState(channel.getUID(), controller.getFreeAir());
+                    }
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_CONSTANTS:
                     updateChannelState(channel.getUID(), controller.getConstants());
@@ -270,7 +269,9 @@ public class ControllerHandler extends BaseBridgeHandler {
                     sendControllerCommand("UnitSetpoint", command.toString());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FREE_AIR:
-                    sendControllerCommand("FreeAir", command.toString().toLowerCase());
+                    if (controller.getFreeAir() != OnOffStatus.DISABLED) {
+                        sendControllerCommand("FreeAir", command.toString().toLowerCase());
+                    }
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_SLEEP_TIMER:
                     sendControllerCommand("SleepTimer", command.toString());
@@ -309,11 +310,11 @@ public class ControllerHandler extends BaseBridgeHandler {
         }
     }
 
-    public @Nullable Controller getController() {
+    public Controller getController() {
         return controller;
     }
 
-    public @Nullable List<Zone> getZones() {
+    public List<Zone> getZones() {
         return zones;
     }
 }

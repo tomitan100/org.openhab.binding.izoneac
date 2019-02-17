@@ -8,7 +8,6 @@
  */
 package org.openhab.binding.izoneac.internal.handler;
 
-import org.eclipse.jdt.annotation.Nullable;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.thing.Bridge;
@@ -19,7 +18,6 @@ import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.iZoneAcClientError;
-import org.openhab.binding.izoneac.internal.config.ZoneConfiguration;
 import org.openhab.binding.izoneac.internal.model.Zone;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,17 +28,13 @@ import org.slf4j.LoggerFactory;
  * @author Thomas Tan - Initial contribution
  */
 public class ZoneHandler extends BaseThingHandler {
-
     private final Logger logger = LoggerFactory.getLogger(ZoneHandler.class);
-
-    @Nullable
-    private ZoneConfiguration configuration;
 
     public ZoneHandler(Thing thing) {
         super(thing);
     }
 
-    private @Nullable ControllerHandler getControllerHandler() {
+    private ControllerHandler getControllerHandler() {
         Bridge bridge = getBridge();
         return bridge != null ? (ControllerHandler) bridge.getHandler() : null;
     }
@@ -63,6 +57,9 @@ public class ZoneHandler extends BaseThingHandler {
                     controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "AirMaxCommand",
                             command.toString());
                     break;
+                case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_SETPOINT:
+                    controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "SetPoint", command.toString());
+                    break;
             }
         } catch (iZoneAcClientError ex) {
             logger.warn("Unable to execute zone command \"" + command.toString() + "\" to channel \""
@@ -72,7 +69,6 @@ public class ZoneHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
-        configuration = getConfigAs(ZoneConfiguration.class);
         updateStatus(ThingStatus.ONLINE);
     }
 
@@ -94,30 +90,48 @@ public class ZoneHandler extends BaseThingHandler {
         getThing().getChannels().forEach(channel -> {
             switch (channel.getUID().getIdWithoutGroup()) {
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_ID:
-                    updateState(channel.getUID(), new StringType(zone.getId().toString()));
+                    updateChannelState(channel.getUID(), zone.getId().toString());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_NAME:
-                    updateState(channel.getUID(), new StringType(zone.getName()));
+                    updateChannelState(channel.getUID(), zone.getName());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_VENT_POSITION:
-                    updateState(channel.getUID(), new StringType(zone.getVentPosition().name()));
+                    updateChannelState(channel.getUID(), zone.getVentPosition().name());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MIN_AIRFLOW:
-                    updateState(channel.getUID(), new DecimalType(zone.getMinAirflow()));
+                    updateChannelState(channel.getUID(), zone.getMinAirflow());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MAX_AIRFLOW:
-                    updateState(channel.getUID(), new DecimalType(zone.getMaxAirflow()));
+                    updateChannelState(channel.getUID(), zone.getMaxAirflow());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_SETPOINT:
-                    updateState(channel.getUID(), new DecimalType(zone.getSetpoint()));
+                    updateChannelState(channel.getUID(), zone.getSetpoint());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_TEMPERATURE:
-                    updateState(channel.getUID(), new DecimalType(zone.getTemperature()));
+                    updateChannelState(channel.getUID(), zone.getTemperature());
                     break;
                 case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_TYPE:
-                    updateState(channel.getUID(), new StringType(zone.getType().getDescription()));
+                    updateChannelState(channel.getUID(), zone.getType().getDescription());
                     break;
             }
         });
+    }
+
+    private void updateChannelState(ChannelUID uid, String value) {
+        if (value != null) {
+            updateState(uid, new StringType(value));
+        }
+    }
+
+    private void updateChannelState(ChannelUID uid, Double value) {
+        if (value != null && !value.isNaN()) {
+            updateState(uid, new DecimalType(value));
+        }
+    }
+
+    private void updateChannelState(ChannelUID uid, Integer value) {
+        if (value != null) {
+            updateState(uid, new DecimalType(value));
+        }
     }
 }

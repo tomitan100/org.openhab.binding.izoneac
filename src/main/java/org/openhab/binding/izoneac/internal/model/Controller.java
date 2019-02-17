@@ -121,36 +121,7 @@ public class Controller {
     public String toString() {
         return "Controller [id=" + id + ", name=" + name + ", unitType=" + unitType + ", powerStatus=" + powerStatus
                 + ", setpoint=" + setpoint + ", temperature=" + temperature + ", mode=" + mode + ", fanSpeed="
-                + fanSpeed + ", zones=" + zones + ", constants=" + constants + ", warnings=" + warnings + "]";
+                + fanSpeed + ", sleepTimer=" + sleepTimer + ", freeAir=" + freeAir + ", favouriteSet=" + favouriteSet
+                + ", zones=" + zones + ", constants=" + constants + ", warnings=" + warnings + "]";
     }
 }
-
-// {
-// "AirStreamDeviceUId": "000000720",
-// "DeviceType": "ASH",
-// "SysOn": "off",
-// "SysMode": "cool",
-// "SysFan": "low",
-// "SleepTimer": 0,
-// "UnitType": "Panasonic",
-// "Supply": "0.0",
-// "Setpoint": "26.0",
-// "Temp": "0.0",
-// "RAS": "RAS",
-// "CtrlZone": 13,
-// "Tag1": "iZone Control Systems",
-// "Tag2": "",
-// "Warnings": "none",
-// "ACError": " OK",
-// "Id": 0,
-// "EcoLock": "true",
-// "EcoMax": "30.0",
-// "EcoMin": "15.0",
-// "NoOfConst": 0,
-// "NoOfZones": 8,
-// "SysType": "310",
-// "AirflowLock": "off",
-// "UnitLocked": "false",
-// "FreeAir": "disabled",
-// "FanAuto": "disabled"
-// }

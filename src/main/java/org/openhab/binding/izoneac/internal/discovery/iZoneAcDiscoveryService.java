@@ -82,7 +82,7 @@ public class iZoneAcDiscoveryService extends AbstractDiscoveryService {
                 properties.put("zoneId", zoneId);
 
                 thingDiscovered(DiscoveryResultBuilder.create(thingUID).withProperties(properties).withBridge(bridgeUID)
-                        .withLabel("iZone AC zone " + zoneId + ": " + zone.getName()).build());
+                        .withLabel("iZone AC Zone " + zoneId + ": " + zone.getName()).build());
             });
         } else {
             logger.debug("iZone AC controller/zones are not available");
