@@ -25,7 +25,7 @@ This binding is created for automation via SmartHome/openHAB in mind.  Currently
 This release will require you assign a static address to the iZone Home Automation Module (CHAM).  This can be accomplished in two ways:
 
 1. In iZone control panel go to "WiFi Configuration", select "Manual Configuration" and enter a static IP address like 192.168.1.30.
-2. In the scenario where you do not have the password to iZone "System Configuration", associate the CHAM MAC ID to a static IP address.
+2. In the scenario where you do not have the password to iZone "System Configuration", assign a static IP address to the CHAM MAC address in your router.
 
 # Compatibility
 Please note, this binding was created for iZone 310 but it should be compatible with newer models of the controller.  If there is an issue please log a defect.
