@@ -35,7 +35,7 @@ This release will require you assign a static address to the iZone Home Automati
 # Configuration
 Instruction below is for configuration under Paper UI.
 
-1. Add iZone AC Controller.  Enter the nominated static IP address as outlined above in the Network Address field.  Leave Network Port as 80.  You may change to poll frequency to a value above 60 seconds.  30 seconds and under is not recomended.  Then choose the channels you want to to use.
+1. Add iZone Air Conditioning Controller from Configuration->Things.  Enter the nominated static IP address as outlined above in the Network Address field.  Leave Network Port as 80.  You may change to poll frequency to a value above 60 seconds.  30 seconds and under is not recomended.  Then choose the channels you want to to use.
 
 2. Go to the Inbox, you should see all the zones available.  If not, go back to Configuration->Things and Add iZone Air Conditioning Controller Binding.  This should bring up the Inbox page.  Add the zone(s) you would like to control.
 
