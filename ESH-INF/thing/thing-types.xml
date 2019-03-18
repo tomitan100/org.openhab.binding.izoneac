@@ -232,7 +232,7 @@
 		<label>Setpoint</label>
 		<description>The setpoint temperature of the zone.</description>
 		<category>Temperature</category>
-		<state pattern="%d %unit%" readOnly="true"></state>
+		<state min="15" max="30" step="1" pattern="%d %unit%" readOnly="false"></state>
 	</channel-type>
 
 	<channel-type id="zoneTemperature">

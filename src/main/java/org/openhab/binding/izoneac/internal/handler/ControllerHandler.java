@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2019 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.izoneac.internal.handler;
 
@@ -33,6 +37,7 @@ import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.iZoneAcClientError;
 import org.openhab.binding.izoneac.internal.config.ControllerConfiguration;
@@ -208,12 +213,27 @@ public class ControllerHandler extends BaseBridgeHandler {
         }
     }
 
+    public void sendControllerCommandAsNumber(String command, String value) throws iZoneAcClientError {
+        synchronized (commandLock) {
+            postCommand(buildUrl("/" + command), "{ \"" + command + "\": " + value + " }");
+        }
+    }
+
     public void sendZoneCommand(String zone, String command, String value) throws iZoneAcClientError {
         String zoneNo = Integer.toString(Integer.parseInt(zone) + 1);
 
         synchronized (commandLock) {
             postCommand(buildUrl("/" + command),
                     "{ \"" + command + "\": { \"ZoneNo\": \"" + zoneNo + "\", \"Command\": \"" + value + "\" } }");
+        }
+    }
+
+    public void sendZoneCommandAsNumber(String zone, String command, String value) throws iZoneAcClientError {
+        String zoneNo = Integer.toString(Integer.parseInt(zone) + 1);
+
+        synchronized (commandLock) {
+            postCommand(buildUrl("/" + command),
+                    "{ \"" + command + "\": { \"ZoneNo\": \"" + zoneNo + "\", \"Command\": " + value + " } }");
         }
     }
 
@@ -235,14 +255,15 @@ public class ControllerHandler extends BaseBridgeHandler {
 
             CloseableHttpResponse response = httpClient.execute(post);
 
-            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+            // There is no need to do anything to the response
+            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-            StringBuffer result = new StringBuffer();
-            String line = "";
+            // StringBuffer result = new StringBuffer();
+            // String line = "";
 
-            while ((line = rd.readLine()) != null) {
-                result.append(line);
-            }
+            // while ((line = rd.readLine()) != null) {
+            // result.append(line);
+            // }
 
         } catch (IOException ex) {
             logger.error("Unable to post command \"" + jsonCommand + "\" to \"" + url + "\"");
@@ -254,35 +275,37 @@ public class ControllerHandler extends BaseBridgeHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        try {
-            switch (channelUID.getIdWithoutGroup()) {
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_POWER:
-                    sendControllerCommand("SystemON", command.toString().toLowerCase());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_MODE:
-                    sendControllerCommand("SystemMODE", command.toString().toLowerCase());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FAN_SPEED:
-                    sendControllerCommand("SystemFAN", command.toString().toLowerCase());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_SETPOINT:
-                    sendControllerCommand("UnitSetpoint", command.toString());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FREE_AIR:
-                    if (controller.getFreeAir() != OnOffStatus.DISABLED) {
-                        sendControllerCommand("FreeAir", command.toString().toLowerCase());
-                    }
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_SLEEP_TIMER:
-                    sendControllerCommand("SleepTimer", command.toString());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FAVOURITE_SET:
-                    sendControllerCommand("FavouriteSet", command.toString());
-                    break;
+        if (!(command instanceof RefreshType)) {
+            try {
+                switch (channelUID.getIdWithoutGroup()) {
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_POWER:
+                        sendControllerCommand("SystemON", command.toString().toLowerCase());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_MODE:
+                        sendControllerCommand("SystemMODE", command.toString().toLowerCase());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FAN_SPEED:
+                        sendControllerCommand("SystemFAN", command.toString().toLowerCase());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_SETPOINT:
+                        sendControllerCommand("UnitSetpoint", command.toString());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FREE_AIR:
+                        if (controller.getFreeAir() != OnOffStatus.DISABLED) {
+                            sendControllerCommand("FreeAir", command.toString().toLowerCase());
+                        }
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_SLEEP_TIMER:
+                        sendControllerCommandAsNumber("SleepTimer", command.toString());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_CONTROLLER_FAVOURITE_SET:
+                        sendControllerCommand("FavouriteSet", command.toString());
+                        break;
+                }
+            } catch (iZoneAcClientError ex) {
+                logger.warn("Unable to execute command \"" + command.toString() + "\" to channel \""
+                        + channelUID.toString() + "\"");
             }
-        } catch (iZoneAcClientError ex) {
-            logger.warn("Unable to execute command \"" + command.toString() + "\" to channel \"" + channelUID.toString()
-                    + "\"");
         }
     }
 

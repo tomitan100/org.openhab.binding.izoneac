@@ -1,10 +1,14 @@
 /**
- * Copyright (c) 2010-2019 by the respective copyright holders.
+ * Copyright (c) 2010-2019 Contributors to the openHAB project
  *
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * See the NOTICE file(s) distributed with this work for additional
+ * information.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0
+ *
+ * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.izoneac.internal.handler;
 
@@ -16,6 +20,7 @@ import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
+import org.eclipse.smarthome.core.types.RefreshType;
 import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.iZoneAcClientError;
 import org.openhab.binding.izoneac.internal.model.Zone;
@@ -41,29 +46,32 @@ public class ZoneHandler extends BaseThingHandler {
 
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
-        ControllerHandler controllerHandler = getControllerHandler();
+        if (!(command instanceof RefreshType)) {
+            ControllerHandler controllerHandler = getControllerHandler();
 
-        try {
-            switch (channelUID.getIdWithoutGroup()) {
-                case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_VENT_POSITION:
-                    controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "ZoneCommand",
-                            command.toString().toLowerCase());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MIN_AIRFLOW:
-                    controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "AirMinCommand",
-                            command.toString());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MAX_AIRFLOW:
-                    controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "AirMaxCommand",
-                            command.toString());
-                    break;
-                case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_SETPOINT:
-                    controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "SetPoint", command.toString());
-                    break;
+            try {
+                switch (channelUID.getIdWithoutGroup()) {
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_VENT_POSITION:
+                        controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "ZoneCommand",
+                                command.toString().toLowerCase());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MIN_AIRFLOW:
+                        controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "AirMinCommand",
+                                command.toString());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_MAX_AIRFLOW:
+                        controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "AirMaxCommand",
+                                command.toString());
+                        break;
+                    case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_SETPOINT:
+                        controllerHandler.sendZoneCommandAsNumber(this.getThing().getUID().getId(), "SetPoint",
+                                command.toString());
+                        break;
+                }
+            } catch (iZoneAcClientError ex) {
+                logger.warn("Unable to execute zone command \"" + command.toString() + "\" to channel \""
+                        + channelUID.toString() + "\"");
             }
-        } catch (iZoneAcClientError ex) {
-            logger.warn("Unable to execute zone command \"" + command.toString() + "\" to channel \""
-                    + channelUID.toString() + "\"");
         }
     }
 
