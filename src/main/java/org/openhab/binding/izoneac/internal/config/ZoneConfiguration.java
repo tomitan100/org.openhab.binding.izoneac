@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -18,7 +18,7 @@ package org.openhab.binding.izoneac.internal.config;
  * @author Thomas Tan - Initial contribution
  */
 public class ZoneConfiguration {
-    public static final String UID = "uid";
+    public static final String ZONE_ID = "zoneId";
 
-    public String uid;
+    public String zoneId;
 }

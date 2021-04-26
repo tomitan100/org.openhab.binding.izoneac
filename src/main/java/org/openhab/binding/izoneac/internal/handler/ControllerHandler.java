@@ -1,13 +1,13 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
- *
+ * Copyright (c) 2010-2020 Contributors to the openHAB project
+ * <p>
  * See the NOTICE file(s) distributed with this work for additional
  * information.
- *
+ * <p>
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
  * http://www.eclipse.org/legal/epl-2.0
- *
+ * <p>
  * SPDX-License-Identifier: EPL-2.0
  */
 package org.openhab.binding.izoneac.internal.handler;
@@ -15,35 +15,32 @@ package org.openhab.binding.izoneac.internal.handler;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.OnOffType;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
+import org.openhab.binding.izoneac.internal.config.ControllerConfiguration;
 import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.iZoneAcClientError;
-import org.openhab.binding.izoneac.internal.config.ControllerConfiguration;
 import org.openhab.binding.izoneac.internal.model.Controller;
 import org.openhab.binding.izoneac.internal.model.OnOffStatus;
 import org.openhab.binding.izoneac.internal.model.Zone;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.OnOffType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.ThingStatusDetail;
+import org.openhab.core.thing.binding.BaseBridgeHandler;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,28 +240,27 @@ public class ControllerHandler extends BaseBridgeHandler {
 
     private boolean postCommand(String url, String jsonCommand) {
         try {
-            CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-            HttpPost post = new HttpPost(url);
+            URL httpUrl = new URL(url);
+            HttpURLConnection con = (HttpURLConnection) httpUrl.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/json; utf-8");
+            con.setRequestProperty("Accept", "application/json");
+            con.setDoOutput(true);
 
-            StringEntity json = new StringEntity(jsonCommand);
+            OutputStream os = con.getOutputStream();
+            byte[] request = jsonCommand.getBytes();
+            os.write(request, 0, request.length);
 
-            post.setHeader("Accept", "application/json");
-            post.setHeader("Content-type", "application/json");
+            try (BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()))) {
+                StringBuilder response = new StringBuilder();
+                String responseLine = null;
 
-            post.setEntity(json);
+                while ((responseLine = br.readLine()) != null) {
+                    response.append(responseLine.trim());
+                }
 
-            CloseableHttpResponse response = httpClient.execute(post);
-
-            // There is no need to do anything to the response
-            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-
-            // StringBuffer result = new StringBuffer();
-            // String line = "";
-
-            // while ((line = rd.readLine()) != null) {
-            // result.append(line);
-            // }
-
+                logger.info(">>>>>>> ", response.toString());
+            }
         } catch (IOException ex) {
             logger.error("Unable to post command \"" + jsonCommand + "\" to \"" + url + "\"");
             return false;
