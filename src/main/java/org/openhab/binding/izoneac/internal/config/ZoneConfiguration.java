@@ -19,6 +19,4 @@ package org.openhab.binding.izoneac.internal.config;
  */
 public class ZoneConfiguration {
     public static final String ZONE_ID = "zoneId";
-
-    public String zoneId;
 }

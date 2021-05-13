@@ -81,7 +81,6 @@ public class ZoneHandler extends BaseThingHandler {
     @Override
     public void initialize() {
         config = getConfigAs(ZoneConfiguration.class);
-        logger.info(">>>>>>> ZONE ID IS: ", config.zoneId);
         updateStatus(ThingStatus.ONLINE);
     }
 

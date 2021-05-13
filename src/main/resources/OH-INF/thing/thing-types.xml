@@ -62,16 +62,6 @@
 			<channel id="temperature" typeId="zoneTemperature"/>
 			<channel id="type" typeId="zoneType"/>
 		</channels>
-
-		<config-description>
-			<parameter name="refresh" type="text" required="true">
-				<label>Zone ID</label>
-				<description>The zone ID (0 - 16).</description>
-				<default>0</default>
-				<required>true</required>
-			</parameter>
-		</config-description>
-
 	</thing-type>
 
 	<!-- CONTROLLER -->

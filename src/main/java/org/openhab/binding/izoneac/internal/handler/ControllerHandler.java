@@ -258,8 +258,6 @@ public class ControllerHandler extends BaseBridgeHandler {
                 while ((responseLine = br.readLine()) != null) {
                     response.append(responseLine.trim());
                 }
-
-                logger.info(">>>>>>> ", response.toString());
             }
         } catch (IOException ex) {
             logger.error("Unable to post command \"" + jsonCommand + "\" to \"" + url + "\"");
