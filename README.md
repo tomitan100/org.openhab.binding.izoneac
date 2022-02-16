@@ -25,11 +25,34 @@ This binding is created for automation via SmartHome/openHAB in mind.  Currently
 3. CHAM connected to your router via WiFi or LAN (only the newer version has LAN port).
 4. Static address assigned to CHAM.
 
-# Installation
+### For openHAB 2
+- openHAB 2.4 to 2.5.x
+- Java 1.8 and above.
+- Fonts installed if local timestamp is enabled for BOM Image.
 
+### For openHAB 3
+- openHAB 3.0.0 and above
+- Java 11 and above.
+- Fonts installed if local timestamp is enabled for BOM Image.
+
+## Installation
+
+### Via Eclipse IoT Market - for openHAB 2 only
 For openHAB install "Eclipse IoT Market" add-on under MISC tab in openHAB Paper UI. Then install "iZone Air Conditioning Controller Binding" from the Bindings page.
 
 For Eclipse SmartHome install from https://marketplace.eclipse.org/content/izone-air-conditioning-controller-binding
+
+### Manual installation - for openHAB 2 and openHAB 3
+Download the latest jar below for your openHAB version and copy to the openHAB `addons` directory.
+
+#### openHAB 3.2.x
+Version 3.2.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/3.2.x/dist/org.openhab.binding.izoneac-3.2.1-SNAPSHOT.jar)
+  
+#### openHAB 3.0.x
+Version 3.0.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/3.0.x/dist/org.openhab.binding.izoneac-3.0.3-SNAPSHOT.jar)
+
+#### openHAB 2.5.x
+Version 2.5.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/master/target/org.openhab.binding.izoneac-2.5.0-SNAPSHOT.jar)
 
 # Limitation
 
@@ -49,3 +72,13 @@ Instruction below is for configuration under Paper UI.
 # Compatibility
 
 Please note, this binding was created for iZone 310 but it should be compatible with newer models of the controller.  If there is an issue please log a defect.
+
+## Change log
+__16/02/2022__
+- Update to 3.2.x 
+
+__13/05/2021__
+- Update to 3.0.x 
+
+__17/02/2019__
+- Initial release.
