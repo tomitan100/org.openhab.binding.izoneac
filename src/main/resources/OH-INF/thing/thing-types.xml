@@ -9,19 +9,19 @@
 		<description>The iZone AC controller bridge.</description>
 
 		<channels>
-			<channel id="id" typeId="controllerId" />
-			<channel id="name" typeId="controllerName" />
-			<channel id="unitType" typeId="controllerUnitType" />
-			<channel id="power" typeId="controllerPower" />
-			<channel id="setpoint" typeId="controllerSetpoint" />
-			<channel id="temperature" typeId="controllerTemperature" />
-			<channel id="mode" typeId="controllerMode" />
-			<channel id="fanSpeed" typeId="controllerFanSpeed" />
-			<channel id="sleepTimer" typeId="controllerSleepTimer" />
-			<channel id="freeAir" typeId="controllerFreeAir" />
-			<channel id="zones" typeId="controllerZones" />
-			<channel id="constants" typeId="controllerConstants" />
-			<channel id="warnings" typeId="controllerWarnings" />
+			<channel id="id" typeId="controllerId"/>
+			<channel id="name" typeId="controllerName"/>
+			<channel id="unitType" typeId="controllerUnitType"/>
+			<channel id="power" typeId="controllerPower"/>
+			<channel id="setpoint" typeId="controllerSetpoint"/>
+			<channel id="temperature" typeId="controllerTemperature"/>
+			<channel id="mode" typeId="controllerMode"/>
+			<channel id="fanSpeed" typeId="controllerFanSpeed"/>
+			<channel id="sleepTimer" typeId="controllerSleepTimer"/>
+			<channel id="freeAir" typeId="controllerFreeAir"/>
+			<channel id="zones" typeId="controllerZones"/>
+			<channel id="constants" typeId="controllerConstants"/>
+			<channel id="warnings" typeId="controllerWarnings"/>
 		</channels>
 
 		<config-description>
@@ -46,30 +46,22 @@
 
 	<thing-type id="zone">
 		<supported-bridge-type-refs>
-			<bridge-type-ref id="controller" />
+			<bridge-type-ref id="controller"/>
 		</supported-bridge-type-refs>
 
 		<label>iZone AC Zone</label>
 		<description>The zone connected to iZone AC.</description>
 
 		<channels>
-			<channel id="id" typeId="zoneId" />
-			<channel id="name" typeId="zoneName" />
-			<channel id="ventPosition" typeId="zoneVentPosition" />
-			<channel id="minAirflow" typeId="zoneMinAirflow" />
-			<channel id="maxAirflow" typeId="zoneMaxAirflow" />
-			<channel id="setpoint" typeId="zoneSetpoint" />
-			<channel id="temperature" typeId="zoneTemperature" />
-			<channel id="type" typeId="zoneType" />
+			<channel id="id" typeId="zoneId"/>
+			<channel id="name" typeId="zoneName"/>
+			<channel id="ventPosition" typeId="zoneVentPosition"/>
+			<channel id="minAirflow" typeId="zoneMinAirflow"/>
+			<channel id="maxAirflow" typeId="zoneMaxAirflow"/>
+			<channel id="setpoint" typeId="zoneSetpoint"/>
+			<channel id="temperature" typeId="zoneTemperature"/>
+			<channel id="type" typeId="zoneType"/>
 		</channels>
-
-		<config-description>
-			<parameter name="uid" type="text">
-				<label>Thing ID</label>
-				<description>The thing ID.</description>
-			</parameter>
-		</config-description>
-
 	</thing-type>
 
 	<!-- CONTROLLER -->

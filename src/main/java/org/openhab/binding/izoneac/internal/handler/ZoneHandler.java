@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -12,18 +12,19 @@
  */
 package org.openhab.binding.izoneac.internal.handler;
 
-import org.eclipse.smarthome.core.library.types.DecimalType;
-import org.eclipse.smarthome.core.library.types.StringType;
-import org.eclipse.smarthome.core.thing.Bridge;
-import org.eclipse.smarthome.core.thing.ChannelUID;
-import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
-import org.eclipse.smarthome.core.types.Command;
-import org.eclipse.smarthome.core.types.RefreshType;
+import org.openhab.binding.izoneac.internal.config.ZoneConfiguration;
 import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.iZoneAcClientError;
 import org.openhab.binding.izoneac.internal.model.Zone;
+import org.openhab.core.library.types.DecimalType;
+import org.openhab.core.library.types.StringType;
+import org.openhab.core.thing.Bridge;
+import org.openhab.core.thing.ChannelUID;
+import org.openhab.core.thing.Thing;
+import org.openhab.core.thing.ThingStatus;
+import org.openhab.core.thing.binding.BaseThingHandler;
+import org.openhab.core.types.Command;
+import org.openhab.core.types.RefreshType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +35,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ZoneHandler extends BaseThingHandler {
     private final Logger logger = LoggerFactory.getLogger(ZoneHandler.class);
+
+    private ZoneConfiguration config;
 
     public ZoneHandler(Thing thing) {
         super(thing);
@@ -64,7 +67,7 @@ public class ZoneHandler extends BaseThingHandler {
                                 command.toString());
                         break;
                     case iZoneAcBindingConstants.CHANNEL_TYPE_ZONE_SETPOINT:
-                        controllerHandler.sendZoneCommandAsNumber(this.getThing().getUID().getId(), "SetPoint",
+                        controllerHandler.sendZoneCommand(this.getThing().getUID().getId(), "SetPoint",
                                 command.toString());
                         break;
                 }
@@ -77,6 +80,7 @@ public class ZoneHandler extends BaseThingHandler {
 
     @Override
     public void initialize() {
+        config = getConfigAs(ZoneConfiguration.class);
         updateStatus(ThingStatus.ONLINE);
     }
 
@@ -85,7 +89,7 @@ public class ZoneHandler extends BaseThingHandler {
         ControllerHandler handler = getControllerHandler();
 
         Zone zone = handler.getZones().stream().filter(z -> z.getId().toString().equals(this.thing.getUID().getId()))
-                .findFirst().get();
+                .findFirst().orElse(null);
 
         if (zone != null) {
             updateZoneState(zone);

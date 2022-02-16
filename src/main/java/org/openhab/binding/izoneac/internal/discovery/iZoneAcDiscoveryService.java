@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2010-2019 Contributors to the openHAB project
+ * Copyright (c) 2010-2021 Contributors to the openHAB project
  *
  * See the NOTICE file(s) distributed with this work for additional
  * information.
@@ -12,23 +12,26 @@
  */
 package org.openhab.binding.izoneac.internal.discovery;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
-import org.eclipse.smarthome.config.discovery.AbstractDiscoveryService;
-import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
-import org.eclipse.smarthome.core.thing.ThingTypeUID;
-import org.eclipse.smarthome.core.thing.ThingUID;
-import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.openhab.binding.izoneac.internal.config.ZoneConfiguration;
 import org.openhab.binding.izoneac.internal.handler.ControllerHandler;
+import org.openhab.binding.izoneac.internal.iZoneAcBindingConstants;
 import org.openhab.binding.izoneac.internal.model.Controller;
 import org.openhab.binding.izoneac.internal.model.Zone;
+import org.openhab.core.config.discovery.AbstractDiscoveryService;
+import org.openhab.core.config.discovery.DiscoveryResultBuilder;
+import org.openhab.core.config.discovery.DiscoveryService;
+import org.openhab.core.thing.ThingTypeUID;
+import org.openhab.core.thing.ThingUID;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,34 +40,62 @@ import org.slf4j.LoggerFactory;
  *
  * @author Thomas Tan - Initial contribution
  */
+@NonNullByDefault
+@Component(service = DiscoveryService.class)
 public class iZoneAcDiscoveryService extends AbstractDiscoveryService {
     private final Logger logger = LoggerFactory.getLogger(iZoneAcDiscoveryService.class);
 
-    private static int DEFAULT_TIMEOUT_SECONDS = 20;
+    private static final int DEFAULT_TIMEOUT_SECONDS = 20;
+    private static final int CHECK_INTERVAL = 3600;
 
-    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Collections.unmodifiableSet(
-            Stream.of(iZoneAcBindingConstants.THING_TYPE_CONTROLLER, iZoneAcBindingConstants.THING_TYPE_ZONE)
-                    .collect(Collectors.toSet()));
+    private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES = Set.of(iZoneAcBindingConstants.THING_TYPE_CONTROLLER,
+            iZoneAcBindingConstants.THING_TYPE_ZONE);
 
+    @Nullable
     private ControllerHandler controllerHandler;
+
+    @Nullable
+    private ScheduledFuture<?> iZoneAcDiscoveryJob;
+
+    public iZoneAcDiscoveryService() {
+        super(SUPPORTED_THING_TYPES, DEFAULT_TIMEOUT_SECONDS);
+    }
 
     public iZoneAcDiscoveryService(ControllerHandler controllerHandler) {
         super(SUPPORTED_THING_TYPES, DEFAULT_TIMEOUT_SECONDS);
-
-        logger.info("Initialising iZone AC discovery service");
-
         this.controllerHandler = controllerHandler;
-
-        this.activate(null);
+        activate(null);
     }
 
     @Override
     protected void startScan() {
-        logger.debug("Starting iZone AC discovery");
-        scheduler.execute(iZoneAcDiscoveryRunnable);
+        logger.info("Starting iZone AC discovery");
     }
 
-    private Runnable iZoneAcDiscoveryRunnable = () -> {
+    @Override
+    protected void startBackgroundDiscovery() {
+        if (controllerHandler != null) {
+            if (iZoneAcDiscoveryJob == null) {
+                iZoneAcDiscoveryJob = scheduler.scheduleWithFixedDelay(() -> {
+                    scanForIZoneThings();
+                }, 0, CHECK_INTERVAL, TimeUnit.SECONDS);
+            }
+        }
+    }
+
+    @Override
+    protected void stopBackgroundDiscovery() {
+        logger.debug("Stopping iZone AC discovery");
+        ScheduledFuture<?> discoveryJob = iZoneAcDiscoveryJob;
+
+        if (discoveryJob != null) {
+            discoveryJob.cancel(true);
+        }
+
+        iZoneAcDiscoveryJob = null;
+    }
+
+    private void scanForIZoneThings() {
         Controller controller = controllerHandler.getController();
         List<Zone> zones = controllerHandler.getZones();
 
@@ -72,16 +103,16 @@ public class iZoneAcDiscoveryService extends AbstractDiscoveryService {
             ThingUID bridgeUID = controllerHandler.getThing().getUID();
 
             // Bridge
-            logger.info("Discovered iZone AC controller \"" + controller.getId() + "\" UID: " + bridgeUID);
+            logger.debug("Discovered iZone AC controller \"" + controller.getId() + "\" UID: " + bridgeUID);
             thingDiscovered(DiscoveryResultBuilder.create(bridgeUID).build());
 
             // Zones
             zones.forEach(zone -> {
-                logger.info("Discovered iZone AC zone " + zone.getId() + ": " + zone.getName());
+                logger.debug("Discovered iZone AC zone " + zone.getId() + ": " + zone.getName());
                 ThingUID thingUID = new ThingUID(iZoneAcBindingConstants.THING_TYPE_ZONE, bridgeUID,
                         zone.getId().toString());
                 Map<String, Object> properties = new HashMap<>();
-                String zoneId = Integer.toString(zone.getId() + 1).toString();
+                String zoneId = Integer.toString(zone.getId() + 1);
 
                 properties.put("zoneId", zoneId);
 
