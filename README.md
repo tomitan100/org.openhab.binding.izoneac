@@ -52,7 +52,7 @@ Version 3.2.x [Download](https://github.com/tomitan100/org.openhab.binding.izone
 Version 3.0.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/3.0.x/dist/org.openhab.binding.izoneac-3.0.3-SNAPSHOT.jar)
 
 #### openHAB 2.5.x
-Version 2.5.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/master/target/org.openhab.binding.izoneac-2.5.0-SNAPSHOT.jar)
+Version 2.5.x [Download](https://github.com/tomitan100/org.openhab.binding.izoneac/raw/2.5.x/target/org.openhab.binding.izoneac-2.5.0-SNAPSHOT.jar)
 
 # Limitation
 
